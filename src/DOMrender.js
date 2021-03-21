@@ -5,7 +5,7 @@ let  storedLibrary = JSON.parse(localStorage.getItem("savedDict"))
 
 let currentNewId = 1;
 
-let todoListItemAdd = (object) => {
+let todoListItemAdd = (object ,projID ,arrayID ,theArray) => {
 
     // create item DOM elements
     let todoListItem = document.createElement("div");
@@ -23,6 +23,15 @@ let todoListItemAdd = (object) => {
     }else if(object.prio==="low"){
         todoListItem.style.backgroundColor="green";
     }
+    let delButton = document.createElement("button")
+    todoListItem.appendChild(delButton)
+    delButton.textContent="x"
+    delButton.addEventListener('click', e=>{
+        delButton.parentElement.style.backgroundColor="pink"
+        console.log(arrayID)
+        console.log("FIX THIS: "+theArray)
+
+    })
     todoListContainer.appendChild(todoListItem);
     
 }
@@ -98,12 +107,14 @@ let addItemForm = () => {
          formDiv.remove(); // removes the popup form
          
          
-         todoListItemAdd(newToDoObject); // ADD ITEM TO DOM
+         //todoListItemAdd(newToDoObject,currentProjectId); // ADD ITEM TO DOM
          
         console.log("moments b4 array: ", projectsDictionary[currentProjectId])
          projectsDictionary[currentProjectId].todoArray.push(newToDoObject)
          // add new todoObject to current active array
-      
+         let itemArrayId = projectsDictionary[currentProjectId].todoArray.findIndex(e=> e.title === title)
+         let theArray = "penis"
+         todoListItemAdd(newToDoObject,currentProjectId, itemArrayId, theArray);
          // v v THIS IS THE WRONG SPOT, MUST ADD NEW PROJ FOR IT TO WORK RN :/ 
 
          localStorage.setItem('savedDict', JSON.stringify(projectsDictionary));
@@ -129,32 +140,39 @@ let addProjectToList = (project, isNew, key) => {
     let newProjectListing = document.createElement("li");
     newProjectListing.textContent=project.projectName;
     newProjectListing.classList.add("projectListItems");
-    
-    if(isNew){newProjectListing.setAttribute("projdata-index", newProjectId)
+    let delKey = 0;
+    if(isNew){
+            newProjectListing.setAttribute("projdata-index", newProjectId)
+            delKey=newProjectId
         }else{
             newProjectListing.setAttribute("projdata-index", key)
+            delKey=key;
         }
-    
+        
         let thisProjId = Number(newProjectId);
+
     if(isNew){
         projectsDictionary[Number(newProjectId)] = project
         
     }
-    console.log("newProjId before: "+ newProjectId)
-    console.log(typeof(newProjectId))
+
+
     newProjectId = Number(newProjectId)+1;
-    console.log("newProjId after: "+ newProjectId)
-    console.log(typeof(newProjectId))
+
+
     localStorage.setItem('currentProjId', newProjectId)
+
     let deleteButton = document.createElement("button");
     deleteButton.classList.add("projDelButton")
     newProjectListing.appendChild(deleteButton)
     deleteButton.textContent="X"
     deleteButton.addEventListener('click', e=>{
-        delete projectsDictionary[thisProjId];
+        //let epicGamer = document.querySelector(".active")
+        //epicGamer.classList.remove(".active")
+        delete projectsDictionary[delKey];
         newProjectListing.remove();
         localStorage.setItem('savedDict', JSON.stringify(projectsDictionary)); 
-
+        
     })
     
     
@@ -167,7 +185,9 @@ let addProjectToList = (project, isNew, key) => {
         if(oldActive){oldActive.classList.remove("active")}
         newProjectListing.classList.add("active")
         let array = project.todoArray;
-        array.forEach(item =>{todoListItemAdd(item)})
+        array.forEach(item =>{
+            let itemID= array.findIndex(elem=>elem.title===item.title)
+            todoListItemAdd(item,project.projectId,itemID)})
     })
     
 
@@ -229,7 +249,7 @@ if(storedLibrary){
       console.log("largestkey = ",largestKey);
       console.log("XXXXXXXXXXXXXXXXXXXXXXX")
       //newProjectId = localStorage.getItem('currentProjId')
-      newProjectId = Number(largestKey)+3;
+      newProjectId = Number(largestKey)+1;
       console.log("savedProjId: " + newProjectId + ' type: ' +typeof(newProjectId))
 }
 
