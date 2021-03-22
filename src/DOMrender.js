@@ -26,11 +26,15 @@ let todoListItemAdd = (object ,projID ,arrayID ,theArray) => {
     let delButton = document.createElement("button")
     todoListItem.appendChild(delButton)
     delButton.textContent="x"
+    todoListItem.addEventListener('click', e=>{
+        console.log(arrayID)
+    })
     delButton.addEventListener('click', e=>{
-        delButton.parentElement.style.backgroundColor="pink"
+        delButton.parentElement.remove();
         console.log(arrayID)
         console.log("FIX THIS: "+theArray)
-
+        projectsDictionary[projID].todoArray.splice(arrayID,1)
+        localStorage.setItem('savedDict', JSON.stringify(projectsDictionary));
     })
     todoListContainer.appendChild(todoListItem);
     
@@ -47,6 +51,7 @@ navbarContainer.appendChild(projectList);
 // NAVBAR CODE ^ ^ ^ ^
 
 let addItemForm = () => {
+    if(!document.querySelector(".active")){alert("you must select a project first!")}
     let currentProject = document.querySelector(".active")
     let currentProjectId = currentProject.getAttribute('projdata-index')
     let formDiv = document.createElement("div");
@@ -113,6 +118,7 @@ let addItemForm = () => {
          projectsDictionary[currentProjectId].todoArray.push(newToDoObject)
          // add new todoObject to current active array
          let itemArrayId = projectsDictionary[currentProjectId].todoArray.findIndex(e=> e.title === title)
+         console.log("proj id"+currentProjectId)
          let theArray = "penis"
          todoListItemAdd(newToDoObject,currentProjectId, itemArrayId, theArray);
          // v v THIS IS THE WRONG SPOT, MUST ADD NEW PROJ FOR IT TO WORK RN :/ 
@@ -155,8 +161,15 @@ let addProjectToList = (project, isNew, key) => {
         projectsDictionary[Number(newProjectId)] = project
         
     }
-
-
+    newProjectListing.addEventListener("mouseenter", e=>{
+        deleteButton.textContent="X"
+        deleteButton.style.display="inline"
+        
+    })
+    newProjectListing.addEventListener("mouseleave", e=>{
+        
+        deleteButton.style.display="none"
+    })
     newProjectId = Number(newProjectId)+1;
 
 
@@ -165,7 +178,7 @@ let addProjectToList = (project, isNew, key) => {
     let deleteButton = document.createElement("button");
     deleteButton.classList.add("projDelButton")
     newProjectListing.appendChild(deleteButton)
-    deleteButton.textContent="X"
+    deleteButton.style.display="none"
     deleteButton.addEventListener('click', e=>{
         //let epicGamer = document.querySelector(".active")
         //epicGamer.classList.remove(".active")
@@ -186,7 +199,7 @@ let addProjectToList = (project, isNew, key) => {
         newProjectListing.classList.add("active")
         let array = project.todoArray;
         array.forEach(item =>{
-            let itemID= array.findIndex(elem=>elem.title===item.title)
+            let itemID = array.findIndex(elem=>elem.title===item.title)
             todoListItemAdd(item,project.projectId,itemID)})
     })
     
