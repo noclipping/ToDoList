@@ -96,7 +96,15 @@ let addItemForm = () => {
     let title = document.querySelector('#newFormTitle').value
     let desc = document.querySelector('#newFormDesc').value
     let date = document.querySelector('#newFormDate').value
-        
+    let duplicate = false;
+    let epiccon = projectsDictionary[currentProjectId].todoArray.forEach(item =>{
+        if(item.title === title){
+            duplicate = true;
+        }
+    })
+    if(duplicate){
+        alert("Task name cannot be duplicated!!!");return;
+    }
         if(highRadio.checked){
             priority="high";
         }else if(mediumRadio.checked){
