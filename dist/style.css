@@ -94,3 +94,11 @@
     text-align: center;
     border: none;
   }
+  .taskDel {
+    background-color: red;
+    font-weight: bold;
+    text-align: center;
+    border: solid;
+    cursor: pointer;
+    display: none;
+  }
